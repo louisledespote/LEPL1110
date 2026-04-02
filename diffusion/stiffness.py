@@ -3,10 +3,21 @@ import numpy as np
 from scipy.sparse import lil_matrix
 
 
-def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, N, gN, kappa_fun, rhs_fun, tag_to_dof):
+def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, Na, gN, kappa_fun, rhs_fun, tag_to_dof):
     """
     Assemble global stiffness matrix and load vector for:
         -d/dx (kappa(x) du/dx) = f(x)
+        con connective (3 ddl* # eleemetn) quel noeus est connecté a quel élément
+        jacobien (par élement tous les jacobé evalué aux points de quadrature) 
+        det (jacob)  * ne * ngp
+        xphys coordonées physique pts de gaus
+        w poids de quadrature
+        Na fonctions de base évaluées aux points de quadrature
+        gN gradients des fonctions de base évalués aux points de quadrature (en coordonnées de  référence)
+        kappa_fun  mon K(x)
+        rhs_fun mon f(x)
+        tag_to_dof mapping des tags de noeuds vers les indices de degrés de liberté globaux
+        --> gmsh me sort des points qui sert à rien donc faire un mapping pour les dofs et les coordonnées physiques
 
     K_ij = ∫ kappa * grad(N_i)·grad(N_j) dx
     F_i  = ∫ f * N_i dx
@@ -87,3 +98,37 @@ def assemble_rhs_neumann(F, elemTags, conn, jac, det, xphys, w, N, gN, g_neu_fun
                 F[Ia] += wg * g_neu_g * N_a * detg
 
     return F
+
+def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, kappa_fun, rhs_fun, tag_to_dof):
+    
+    ne = len(elemTags) # nombre d'éléments
+    ngp = len(w)        # nombre de points de quadrature 
+    nloc = int(len(conn) // ne)   # nombre de noeuds par élément
+    nn = int(np.max(tag_to_dof) + 1) # nombre total de degrés de liberté (doit être égal au nombre de noeuds uniques)
+    # --> nn on prend le mapping et on ajoute les élement car commence à 0  
+    
+    det = np.asarray(det, dtype=np.float64).reshape(ne, ngp)
+    xphys = np.asarray(xphys, dtype=np.float64).reshape(ne, ngp)
+    jac = np.asarray(jac, dtype=np.float64).reshape(ne, ngp, 3, 3)
+    conn = np.asarray(conn, dtype=np.int64).reshape(ne, nloc)
+    N = np.asarray(N, dtype=np.float64).reshape(ngp, nloc)
+    gN = np.asarray(gN, dtype=np.float64).reshape(ngp, nloc, 3)
+
+
+    K = lil_matrix((nn, nn), dtype=np.float64)
+    F = np.zeros(nn, dtype=np.float64)
+
+    for e in range(ne):
+        elemTags_e = conn[e, :]
+        dof_indices = tag_to_dof[elemTags_e]
+        for g in range(ngp):
+            Sg = float(xphys[e, g])
+            wg = w[g]
+            detg = det[e, g]
+            invjacg = np.linalg.inv(jac[e, g])
+
+            a_g = 0.5 * sigma**2 * Sg**2
+            b_g = r * Sg
+
+                                                        
+
