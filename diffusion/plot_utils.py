@@ -3,52 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import gmsh
-from gmsh_utils import prepare_quadrature_and_basis, get_jacobians
-
-
-
-# Plot the generated mesh. Highlight the physical groups created. 
-def plot_mesh_2d(elemType, nodeTags, nodeCoords, elemTags, elemNodeTags, bnds, bnds_tags, tag_to_index=None):
-
-    coords = nodeCoords.reshape(-1, 3)
-    x = coords[:, 0]
-    y = coords[:, 1]
-
-    if tag_to_index is None:
-        max_node_tag = int(np.max(nodeTags))
-        tag_to_index = np.zeros(max_node_tag + 1, dtype=int)
-        for i, tag in enumerate(nodeTags):
-            tag_to_index[int(tag)] = i
-
-    num_elements = len(elemTags)
-    nodes_per_elem = len(elemNodeTags) // num_elements
-
-    # take only the first 3 nodes (=geometric nodes that form the triangles)    
-    all_nodes = elemNodeTags.reshape(num_elements, nodes_per_elem)
-    corner_nodes = all_nodes[:, :3] 
-    
-    # Map to indices
-    tri_indices = tag_to_index[corner_nodes.astype(int)]
-    # ---------------------------------------
-
-    mesh_triang = tri.Triangulation(x, y, tri_indices)
-    fig, ax = plt.subplots(figsize=(10, 5))
-    
-    # Plot the skeleton
-    ax.triplot(mesh_triang, color='black', lw=0.5, alpha=0.4)
-
-    colors = ["red", "darkblue", "orange", "mediumpurple", "pink"]
-    for i, (name, dim) in enumerate(bnds):
-        tags = bnds_tags[i]
-        indices = tag_to_index[tags.astype(int)]
-        ax.scatter(x[indices], y[indices], label=name, s=15, zorder=3, 
-                   marker="o", facecolor="None", edgecolor=colors[i % len(colors)])
-
-    ax.set_aspect('equal')
-    ax.legend(frameon=True, framealpha=1, ncols=2, loc="lower center", bbox_to_anchor=(0.5, 1.02))
-    plt.axis(False)
-    plt.show()
-
 
 
 def plot_fe_solution_high_order(
@@ -96,6 +50,57 @@ def plot_fe_solution_high_order(
     return ax
 
 
+def setup_interactive_figure(xlim=None, ylim=None):
+    plt.ion()
+    fig, ax = plt.subplots()
+    if xlim is not None:
+        ax.set_xlim(*xlim)
+    if ylim is not None:
+        ax.set_ylim(*ylim)
+    return fig, ax
+
+def plot_mesh_2d(elemType, nodeTags, nodeCoords, elemTags, elemNodeTags, bnds, bnds_tags, tag_to_index=None):
+
+    coords = nodeCoords.reshape(-1, 3)
+    x = coords[:, 0]
+    y = coords[:, 1]
+
+    if tag_to_index is None:
+        max_node_tag = int(np.max(nodeTags))
+        tag_to_index = np.zeros(max_node_tag + 1, dtype=int)
+        for i, tag in enumerate(nodeTags):
+            tag_to_index[int(tag)] = i
+
+    num_elements = len(elemTags)
+    nodes_per_elem = len(elemNodeTags) // num_elements
+
+    # take only the first 3 nodes (=geometric nodes that form the triangles)    
+    all_nodes = elemNodeTags.reshape(num_elements, nodes_per_elem)
+    corner_nodes = all_nodes[:, :3] 
+    
+    # Map to indices
+    tri_indices = tag_to_index[corner_nodes.astype(int)]
+    # ---------------------------------------
+
+    mesh_triang = tri.Triangulation(x, y, tri_indices)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    
+    # Plot the skeleton
+    ax.triplot(mesh_triang, color='black', lw=0.5, alpha=0.4)
+
+    colors = ["red", "darkblue", "orange", "mediumpurple", "pink"]
+    for i, (name, dim) in enumerate(bnds):
+        tags = bnds_tags[i]
+        indices = tag_to_index[tags.astype(int)]
+        ax.scatter(x[indices], y[indices], label=name, s=15, zorder=3, 
+                   marker="o", facecolor="None", edgecolor=colors[i % len(colors)])
+
+    ax.set_aspect('equal')
+    ax.legend(frameon=True, framealpha=1, ncols=2, loc="lower center", bbox_to_anchor=(0.5, 1.02))
+    plt.axis(False)
+    plt.show()
+
+
 def plot_fe_solution_2d(elemNodeTags, nodeCoords, nodeTags, U, tag_to_dof, show_mesh=False, ax=None, label=None):
 
     if ax is None:
@@ -127,23 +132,9 @@ def plot_fe_solution_2d(elemNodeTags, nodeCoords, nodeTags, U, tag_to_dof, show_
     triangles = tag_to_dof[conn_reshaped[:, :3].astype(int)]
     # 4. Plotting
     U = np.array(U).flatten()
-    contour = ax.tricontourf(x, y, triangles, U, levels=100, cmap='viridis')
+    contour = ax.tricontourf(x, y, triangles, U, levels=100, cmap='seismic', vmin=-2.0, vmax=2.0)
     
     if show_mesh:
         ax.triplot(x, y, triangles, color='white', linewidth=0.2, alpha=0.3)
 
-    ax.set_aspect('equal')
-    plt.colorbar(contour, ax=ax, label=label)
-    
     return contour
-
-
-def setup_interactive_figure(xlim=(0.0, 1.0), ylim=None):
-    plt.ion()
-    fig, ax = plt.subplots()
-    ax.set_xlim(*xlim)
-    if ylim is not None:
-        ax.set_ylim(*ylim)
-    ax.grid(True)
-    return fig, ax
-
