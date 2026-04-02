@@ -12,6 +12,13 @@ from dirichlet import theta_step
 from plot_utils import plot_fe_solution_high_order, setup_interactive_figure
 
 
+
+sigma = 0.2
+r = 0.02
+K_strike = 40
+T = 1.0
+S_max = 100
+
 def main():
     parser = argparse.ArgumentParser(description="Diffusion 1D with theta-scheme (Gmsh high-order FE)")
     parser.add_argument("-order", type=int, default=1)
