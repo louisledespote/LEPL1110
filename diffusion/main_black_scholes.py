@@ -6,7 +6,7 @@ from gmsh_utils import (
     gmsh_init, gmsh_finalize, build_1d_mesh,
     prepare_quadrature_and_basis, get_jacobians, end_dofs_from_nodes
 )
-from stiffness import assemble_stiffness_and_rhs
+from stiffness import assemble_black_scholes_operator
 from mass import assemble_mass
 from dirichlet import theta_step
 from plot_utils import plot_fe_solution_high_order, setup_interactive_figure
@@ -53,25 +53,27 @@ def main():
     xi, w, N, gN = prepare_quadrature_and_basis(elemType, args.order)
     jac, det, coords = get_jacobians(elemType, xi)
 
-    def kappa(x): return 1.0
-    def f_source(x): return 0.0
-    def u0(x): return 1.0*np.sin(np.pi*x/L) + 2.0*np.sin(8*np.pi*x/L)
+    sigma = 0.2
+    r = 0.02
 
-    K_lil, F = assemble_stiffness_and_rhs(
-        elemTags, elemNodeTags, jac, det, coords, w, N, gN, kappa, f_source, tag_to_dof
-    )
+    K_lil, F = assemble_black_scholes_operator(
+        elemTags, elemNodeTags, jac, det, coords, w, N, gN, sigma, r, tag_to_dof
+        )
     M_lil = assemble_mass(elemTags, elemNodeTags, det, w, N, tag_to_dof)
 
     K = K_lil.tocsr()
     M = M_lil.tocsr()
 
     n = len(F)
-    U = np.array([u0(x) for x in nodeCoords[::3]], dtype=float)
+    K_strike = 40.0 
+    S_nodes = dof_coords[:, 0]
+    U = np.maximum(S_nodes - K_strike, 0.0)
 
     left, right = end_dofs_from_nodes(nodeCoords)
     dir_dofs = [left, right]
-    dir_vals = np.array([0.0, 0.0], dtype=float)
+    dir_vals = np.array([0.0, max(args.L - K_strike, 0.0)], dtype=float)
 
+    
     fig, ax = setup_interactive_figure(xlim=(0.0, args.L))
     u_min = float(np.min(U))
     u_max = float(np.max(U))
