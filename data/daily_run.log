@@ -1,0 +1,520 @@
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-HbC9T3 --remote-debugging-pipe --no-startup-window
+  - <launched> pid=57271
+  - [pid=57271][err] [57271:57271:0404/180002.562119:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=57271][err] [57271:57271:0404/180002.562680:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=57271] <gracefully close start>
+  - [pid=57271] <kill>
+  - [pid=57271] <will force kill>
+  - [pid=57271] <process did exit: exitCode=1, signal=null>
+  - [pid=57271] starting temporary directories cleanup
+  - [pid=57271] finished temporary directories cleanup
+  - [pid=57271] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-bsGHbf --remote-debugging-pipe --no-startup-window
+  - <launched> pid=60209
+  - [pid=60209][err] [60209:60209:0406/180001.763236:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=60209][err] [60209:60209:0406/180001.763715:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=60209] <gracefully close start>
+  - [pid=60209] <kill>
+  - [pid=60209] <will force kill>
+  - [pid=60209] <process did exit: exitCode=1, signal=null>
+  - [pid=60209] starting temporary directories cleanup
+  - [pid=60209] finished temporary directories cleanup
+  - [pid=60209] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-XpneKg --remote-debugging-pipe --no-startup-window
+  - <launched> pid=27786
+  - [pid=27786][err] [27786:27786:0407/180002.511302:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=27786][err] [27786:27786:0407/180002.512110:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=27786] <gracefully close start>
+  - [pid=27786] <kill>
+  - [pid=27786] <will force kill>
+  - [pid=27786] <process did exit: exitCode=1, signal=null>
+  - [pid=27786] starting temporary directories cleanup
+  - [pid=27786] finished temporary directories cleanup
+  - [pid=27786] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-kghkMl --remote-debugging-pipe --no-startup-window
+  - <launched> pid=11051
+  - [pid=11051][err] [11051:11051:0409/180002.206155:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=11051][err] [11051:11051:0409/180002.206851:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=11051] <gracefully close start>
+  - [pid=11051] <kill>
+  - [pid=11051] <will force kill>
+  - [pid=11051] <process did exit: exitCode=1, signal=null>
+  - [pid=11051] starting temporary directories cleanup
+  - [pid=11051] finished temporary directories cleanup
+  - [pid=11051] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-G32yo4 --remote-debugging-pipe --no-startup-window
+  - <launched> pid=28323
+  - [pid=28323][err] [28323:28323:0410/180002.434477:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=28323][err] [28323:28323:0410/180002.435252:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=28323] <gracefully close start>
+  - [pid=28323] <kill>
+  - [pid=28323] <will force kill>
+  - [pid=28323] <process did exit: exitCode=1, signal=null>
+  - [pid=28323] starting temporary directories cleanup
+  - [pid=28323] finished temporary directories cleanup
+  - [pid=28323] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-QFoEP4 --remote-debugging-pipe --no-startup-window
+  - <launched> pid=32025
+  - [pid=32025][err] [32025:32025:0411/180002.278203:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=32025][err] [32025:32025:0411/180002.278872:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=32025] <gracefully close start>
+  - [pid=32025] <kill>
+  - [pid=32025] <will force kill>
+  - [pid=32025] <process did exit: exitCode=1, signal=null>
+  - [pid=32025] starting temporary directories cleanup
+  - [pid=32025] finished temporary directories cleanup
+  - [pid=32025] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-clyr03 --remote-debugging-pipe --no-startup-window
+  - <launched> pid=12297
+  - [pid=12297][err] [12297:12297:0412/180002.238614:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=12297][err] [12297:12297:0412/180002.239355:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=12297] <gracefully close start>
+  - [pid=12297] <kill>
+  - [pid=12297] <will force kill>
+  - [pid=12297] <process did exit: exitCode=1, signal=null>
+  - [pid=12297] starting temporary directories cleanup
+  - [pid=12297] finished temporary directories cleanup
+  - [pid=12297] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py
+Table option_quotes vidée
+Table underlying_prices vidée
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 284, in <module>
+    main()
+    ~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/collect_euronext.py", line 247, in main
+    browser = p.chromium.launch(headless=False)
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 14566, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 97, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/lopetitjean/Desktop/LEPL1110/code/femvenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Looks like you launched a headed browser without having a XServer running.                     ║
+║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+║                                                                                                ║
+║ <3 Playwright Team                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+Call log:
+  - <launching> /home/lopetitjean/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-IbyIjq --remote-debugging-pipe --no-startup-window
+  - <launched> pid=10313
+  - [pid=10313][err] [10313:10313:0413/180002.210653:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+  - [pid=10313][err] [10313:10313:0413/180002.211450:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+  - [pid=10313] <gracefully close start>
+  - [pid=10313] <kill>
+  - [pid=10313] <will force kill>
+  - [pid=10313] <process did exit: exitCode=1, signal=null>
+  - [pid=10313] starting temporary directories cleanup
+  - [pid=10313] finished temporary directories cleanup
+  - [pid=10313] <gracefully close end>
+
+Lancement de clear_options.py ...
+Lancement de clear_underlying.py ...
+Lancement de collect_euronext.py ...
+Traceback (most recent call last):
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 18, in <module>
+    run("collect_euronext.py")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lopetitjean/Desktop/LEPL1110/projet/scripts/run_daily.py", line 13, in run
+    raise RuntimeError(f"Erreur dans {script_name}")
+RuntimeError: Erreur dans collect_euronext.py

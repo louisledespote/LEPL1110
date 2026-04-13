@@ -1,7 +1,6 @@
 # stiffness.py
 import numpy as np
 from scipy.sparse import lil_matrix
-from main_black_scholes import sigma, r
 
 def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, Na, gN, kappa_fun, rhs_fun, tag_to_dof):
     """
@@ -99,7 +98,7 @@ def assemble_rhs_neumann(F, elemTags, conn, jac, det, xphys, w, N, gN, g_neu_fun
 
     return F
 
-def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, kappa_fun, rhs_fun, tag_to_dof):
+def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, sigma, r, tag_to_dof):
     
     ne = len(elemTags) # nombre d'éléments
     ngp = len(w)        # nombre de points de quadrature 
@@ -108,10 +107,10 @@ def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, 
     # --> nn on prend le mapping et on ajoute les élement car commence à 0  
     
     det = np.asarray(det, dtype=np.float64).reshape(ne, ngp)
-    xphys = np.asarray(xphys, dtype=np.float64).reshape(ne, ngp)
+    xphys = np.asarray(xphys, dtype=np.float64).reshape(ne, ngp, 3)
     jac = np.asarray(jac, dtype=np.float64).reshape(ne, ngp, 3, 3)
     conn = np.asarray(conn, dtype=np.int64).reshape(ne, nloc)
-    N = np.asarray(N, dtype=np.float64).reshape(ngp, nloc)
+    N_vals = np.asarray(Na, dtype=np.float64).reshape(ngp, nloc)
     gN = np.asarray(gN, dtype=np.float64).reshape(ngp, nloc, 3)
 
 
@@ -122,7 +121,7 @@ def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, 
         elemTags_e = conn[e, :]
         dof_indices = tag_to_dof[elemTags_e]
         for g in range(ngp):
-            Sg = xphys[e, g]
+            Sg = xphys[e, g, 0]  
             wg = w[g]
             detg = det[e, g]
             invjacg = np.linalg.inv(jac[e, g])
@@ -131,16 +130,15 @@ def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, 
             b_g = r * Sg
             for a in range(nloc):
                 Ia = int(dof_indices[a])
-                Na = N[g, a]
+                Na = N_vals[g, a]
                 gradNa = invjacg @ gN[g, a]
                 dNa_ds = gradNa[0]  # Assuming the first component corresponds to the spatial derivative in the 1D case
                 for b in range(nloc):
                     Ib = int(dof_indices[b])
-                    Nb = N[g, b]
+                    Nb = N_vals[g, b]
                     gradNa = invjacg @ gN[g, a]
                     gradNb = invjacg @ gN[g, b]
                     dNb_ds = gradNb[0]  # Assuming the first component corresponds to the spatial derivative in the 1D case
-                    K[Ia, Ib] += wg * (a_g * float(np.dot(gradNa, gradNb)) + b_g * float(np.dot(gradNa, N[g, b]))) * detg
                     diffusion_term = a_g * dNa_ds * dNb_ds
                     convection_term = - b_g * dNa_ds * Na
                     reaction_term = r * Na * Nb

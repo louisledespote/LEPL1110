@@ -1,6 +1,27 @@
 # main_diffusion_1d.py
 import argparse
+from html import parser
 import numpy as np
+import pandas as pd
+from datetime import datetime, timedelta
+
+from stiffness import assemble_stiffness_and_rhs, assemble_rhs_neumann
+
+
+sigma = 0.2
+r = 0.02
+K_strike = 40
+T = 1.0
+S_max = 100
+
+
+# Les options europééen arrive a matu le s3 vendredi du moi
+def third_friday(year, month):
+    d = datetime(year, month, 1)
+    while d.weekday() != 4:  # 4 = vendredi
+        d += timedelta(days=1)
+    d += timedelta(weeks=2)
+    return d
 
 from gmsh_utils import (
     gmsh_init, gmsh_finalize, build_1d_mesh,
@@ -13,11 +34,52 @@ from plot_utils import plot_fe_solution_high_order, setup_interactive_figure
 
 
 
-sigma = 0.2
-r = 0.02
-K_strike = 40
-T = 1.0
-S_max = 100
+def maturity_label_to_expiry(label):
+    month_map = {
+        "JAN": 1, "FEB": 2, "MAR": 3, "APR": 4, "MAY": 5, "JUN": 6,
+        "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12
+    }
+
+    mmm, yyyy = label.strip().split()
+    month = month_map[mmm.upper()]
+    year = int(yyyy)
+    return third_friday(year, month)
+
+def load_market_data(options_csv, underlying_csv, maturity_label):
+    df_opt = pd.read_csv(options_csv)
+    df_und = pd.read_csv(underlying_csv)
+
+    # garder seulement les calls de la maturité demandée
+    df_opt = df_opt[df_opt["option_type"] == "CALL"].copy()
+    df_opt = df_opt[df_opt["maturity"] == maturity_label].copy()
+    df_opt = df_opt.sort_values("strike").reset_index(drop=True)
+
+    if df_opt.empty:
+        raise ValueError(f"Aucune option trouvée pour la maturité {maturity_label}")
+
+    if df_und.empty:
+        raise ValueError("Le fichier underlying est vide")
+
+    # spot = dernier spot disponible
+    S0 = float(df_und["spot"].iloc[-1])
+
+    # date de collecte
+    date_str = str(df_opt["date"].iloc[0])
+    t0 = datetime.fromisoformat(date_str)
+
+    # date d'échéance
+    expiry = maturity_label_to_expiry(maturity_label)
+
+    # temps à maturité en années
+    tau = max((expiry - t0).days, 0) / 365.0
+    
+    #
+    Kmax_market = float(df_opt["strike"].max())
+    Smax = max(3.0 * Kmax_market, 2.0 * S0)
+
+    return df_opt, S0, tau, t0, expiry,Kmax_market, S_max
+
+
 
 def main():
     parser = argparse.ArgumentParser(description="Diffusion 1D with theta-scheme (Gmsh high-order FE)")
@@ -25,15 +87,34 @@ def main():
     parser.add_argument("-cl1", type=float, default=0.05)
     parser.add_argument("-cl2", type=float, default=0.05)
     parser.add_argument("-L", type=float, default=1.0)
-
+    parser.add_argument("--options_csv", type=str, default="../data/daily_clean/2026-04-01_options.csv")
+    parser.add_argument("--underlying_csv", type=str, default="../data/daily_clean/2026-04-01_underlying.csv")
+    parser.add_argument("--maturity", type=str, default="MAY 2026") 
     parser.add_argument("--theta", type=float, default=1.0, help="1: implicit Euler, 0.5: Crank-Nicolson, 0: explicit")
     parser.add_argument("--dt", type=float, default=1.0e-04)
     parser.add_argument("--nsteps", type=int, default=500)
+    
+    
     args = parser.parse_args()
+    df_opt, S0, tau, t0, expiry, Kmax_market, S_max = load_market_data(
+        args.options_csv,
+        args.underlying_csv,
+        args.maturity
+    )
 
+    print("=== Données marché ===")
+    print("Maturité choisie :", args.maturity)
+    print("Spot S0          :", S0)
+    print("Date collecte    :", t0.date())
+    print("Date échéance    :", expiry.date())
+    print("Tau              :", tau)
+    print("S_max            :", S_max)
+    print("K_max            :", Kmax_market)
+    print(df_opt[["strike", "settlement"]])
+    
     gmsh_init("diffusion_1d")
 
-    L = args.L
+    L = S_max
 
     _, elemType, nodeTags, nodeCoords, elemTags, elemNodeTags = build_1d_mesh(
         L=args.L, cl1=args.cl1, cl2=args.cl2, order=args.order
@@ -73,7 +154,7 @@ def main():
     dir_dofs = [left, right]
     dir_vals = np.array([0.0, max(args.L - K_strike, 0.0)], dtype=float)
 
-    
+
     fig, ax = setup_interactive_figure(xlim=(0.0, args.L))
     u_min = float(np.min(U))
     u_max = float(np.max(U))
