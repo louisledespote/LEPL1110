@@ -138,3 +138,20 @@ def plot_fe_solution_2d(elemNodeTags, nodeCoords, nodeTags, U, tag_to_dof, show_
         ax.triplot(x, y, triangles, color='white', linewidth=0.2, alpha=0.3)
 
     return contour
+
+def plot_prices_vs_strike(results, maturity):
+    strikes = [row["strike"] for row in results]
+    market = [row["market_price"] for row in results]
+    fem = [row["fem_price"] for row in results]
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(strikes, market, "o-", label="Marché")
+    plt.plot(strikes, fem, "s-", label="FEM")
+
+    plt.xlabel("Strike K")
+    plt.ylabel("Prix du call")
+    plt.title(f"Comparaison FEM vs Marché - {maturity}")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()

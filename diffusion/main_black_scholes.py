@@ -1,10 +1,12 @@
 # main_diffusion_1d.py
 import argparse
 from html import parser
+from turtle import left, right
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-
+import matplotlib.pyplot as plt
+from plot_utils import plot_prices_vs_strike
 from stiffness import assemble_stiffness_and_rhs, assemble_rhs_neumann
 
 
@@ -77,7 +79,7 @@ def load_market_data(options_csv, underlying_csv, maturity_label):
     Kmax_market = float(df_opt["strike"].max())
     Smax = max(3.0 * Kmax_market, 2.0 * S0)
 
-    return df_opt, S0, tau, t0, expiry,Kmax_market, S_max
+    return df_opt, S0, tau, t0, expiry, Kmax_market, Smax
 
 
 
@@ -117,26 +119,38 @@ def main():
     L = S_max
 
     _, elemType, nodeTags, nodeCoords, elemTags, elemNodeTags = build_1d_mesh(
-        L=args.L, cl1=args.cl1, cl2=args.cl2, order=args.order
+        L=L, cl1=args.cl1, cl2=args.cl2, order=args.order
     )
 
     unique_dofs_tags = np.unique(elemNodeTags)
 
     num_dofs = len(unique_dofs_tags)
     max_tag = int(np.max(nodeTags))
-    dof_coords = np.zeros((num_dofs, 3))
-    all_coords = nodeCoords.reshape(-1, 3)
     tag_to_dof = np.full(max_tag + 1, -1, dtype=int)
+    dof_coords = np.zeros((num_dofs, 3), dtype=float)
+
+    all_coords = nodeCoords.reshape(-1, 3)
+
+# 1) construire le mapping tag gmsh -> dof compact
     for i, tag in enumerate(unique_dofs_tags):
         tag_to_dof[int(tag)] = i
-        dof_coords[i] = all_coords[i]
 
+# 2) remplir correctement les coordonnées des dofs
+    for i, tag in enumerate(nodeTags):
+        dof_idx = tag_to_dof[int(tag)]
+        if dof_idx != -1:
+            dof_coords[dof_idx] = all_coords[i]
+            
     xi, w, N, gN = prepare_quadrature_and_basis(elemType, args.order)
     jac, det, coords = get_jacobians(elemType, xi)
 
     sigma = 0.2
     r = 0.02
+    S_nodes = dof_coords[:, 0]
 
+    print("S_nodes min =", np.min(S_nodes))
+    print("S_nodes max =", np.max(S_nodes))
+    print("Premiers S_nodes =", S_nodes[:10])
     K_lil, F = assemble_black_scholes_operator(
         elemTags, elemNodeTags, jac, det, coords, w, N, gN, sigma, r, tag_to_dof
         )
@@ -144,50 +158,71 @@ def main():
 
     K = K_lil.tocsr()
     M = M_lil.tocsr()
+    print("Test signe K :", K[0, 0], K[1, 1])
 
     n = len(F)
-    K_strike = 40.0 
     S_nodes = dof_coords[:, 0]
-    U = np.maximum(S_nodes - K_strike, 0.0)
-
-    left, right = end_dofs_from_nodes(nodeCoords)
+    left = int(np.argmin(S_nodes))
+    right = int(np.argmax(S_nodes))
     dir_dofs = [left, right]
-    dir_vals = np.array([0.0, max(args.L - K_strike, 0.0)], dtype=float)
+    
+    
+    dt = tau / args.nsteps
 
+    results = []
 
-    fig, ax = setup_interactive_figure(xlim=(0.0, args.L))
-    u_min = float(np.min(U))
-    u_max = float(np.max(U))
-    pad = 0.05 * (u_max - u_min + 1e-14)
-    ylim = (u_min - pad, u_max + pad)
+    for _, row in df_opt.iterrows():
+        K_strike = float(row["strike"])
+        market_price = float(row["settlement"])
 
-    import matplotlib.pyplot as plt
+        # condition initiale = payoff
+        U = np.maximum(S_nodes - K_strike, 0.0)
+        U[left] = 0.0
+        U[right] = max(L - K_strike, 0.0)
 
-    for step in range(args.nsteps):
-        U = theta_step(M, K, F, F, U, dt=args.dt, theta=args.theta, dirichlet_dofs=dir_dofs, dir_vals_np1=dir_vals)
+        # boucle en temps
+        for step in range(args.nsteps):
+            tau_np1 = (step + 1) * dt
 
-        ax.clear()
-        ax.set_xlim(0.0, args.L)
-        ax.set_ylim(*ylim)
+            dir_vals = np.array([
+                0.0,
+                L - K_strike * np.exp(-r * tau_np1)
+            ], dtype=float)
 
-        plot_fe_solution_high_order(
-            elemType=elemType,
-            elemNodeTags=elemNodeTags,
-            nodeCoords=nodeCoords,
-            U=U,
-            M=120,
-            show_nodes=False,
-            ax=ax
+            U = theta_step(
+                M, K, F, F, U,
+                dt=dt,
+                theta=args.theta,
+                dirichlet_dofs=dir_dofs,
+                dir_vals_np1=dir_vals
+            )
+
+        # prix FEM évalué au spot
+        order =  np.argsort(S_nodes)
+        S_nodes_sorted = S_nodes[order]
+        U_sorted = U[order]
+        fem_price = np.interp(S0, S_nodes_sorted, U_sorted)
+        print("S0 =", S0)
+        print("U min =", np.min(U), "U max =", np.max(U))
+        print("S_sorted first =", S_nodes_sorted[:10])
+        results.append({
+            "strike": K_strike,
+            "market_price": market_price,
+            "fem_price": fem_price,
+            "abs_error": abs(fem_price - market_price)
+            })
+        
+    print("\n=== Comparaison FEM / Marché ===")
+    for row in results:
+        print(
+            f"K={row['strike']:.2f} | "
+            f"Marché={row['market_price']:.4f} | "
+            f"FEM={row['fem_price']:.4f} | "
+            f"Erreur={row['abs_error']:.4f}"
         )
-
-        ax.set_title(f"t = {step * args.dt:.4f}   (theta={args.theta})")
-        ax.set_xlabel("x")
-        ax.set_ylabel(r"$u_h(x,t)$")
-        ax.grid(True)
-
-        plt.pause(0.03)
-
+        plot_prices_vs_strike(results, args.maturity)
     gmsh_finalize()
+
 
 
 if __name__ == "__main__":
