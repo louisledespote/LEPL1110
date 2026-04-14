@@ -1,89 +1,28 @@
-# main_diffusion_1d.py
+# Import
 import argparse
 from html import parser
-from turtle import left, right
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from plot_utils import plot_prices_vs_strike
-from stiffness import assemble_stiffness_and_rhs, assemble_rhs_neumann
+from stiffness import assemble_black_scholes_operator
+from mass import assemble_mass
+from dirichlet import theta_step
 
-
-sigma = 0.2
-r = 0.02
-K_strike = 40
-T = 1.0
-S_max = 100
-
-
-# Les options europééen arrive a matu le s3 vendredi du moi
-def third_friday(year, month):
-    d = datetime(year, month, 1)
-    while d.weekday() != 4:  # 4 = vendredi
-        d += timedelta(days=1)
-    d += timedelta(weeks=2)
-    return d
+from read_data_csv import load_market_data
 
 from gmsh_utils import (
     gmsh_init, gmsh_finalize, build_1d_mesh,
     prepare_quadrature_and_basis, get_jacobians, end_dofs_from_nodes
 )
-from stiffness import assemble_black_scholes_operator
-from mass import assemble_mass
-from dirichlet import theta_step
-from plot_utils import plot_fe_solution_high_order, setup_interactive_figure
 
 
-
-def maturity_label_to_expiry(label):
-    month_map = {
-        "JAN": 1, "FEB": 2, "MAR": 3, "APR": 4, "MAY": 5, "JUN": 6,
-        "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12
-    }
-
-    mmm, yyyy = label.strip().split()
-    month = month_map[mmm.upper()]
-    year = int(yyyy)
-    return third_friday(year, month)
-
-def load_market_data(options_csv, underlying_csv, maturity_label):
-    df_opt = pd.read_csv(options_csv)
-    df_und = pd.read_csv(underlying_csv)
-
-    # garder seulement les calls de la maturité demandée
-    df_opt = df_opt[df_opt["option_type"] == "CALL"].copy()
-    df_opt = df_opt[df_opt["maturity"] == maturity_label].copy()
-    df_opt = df_opt.sort_values("strike").reset_index(drop=True)
-
-    if df_opt.empty:
-        raise ValueError(f"Aucune option trouvée pour la maturité {maturity_label}")
-
-    if df_und.empty:
-        raise ValueError("Le fichier underlying est vide")
-
-    # spot = dernier spot disponible
-    S0 = float(df_und["spot"].iloc[-1])
-
-    # date de collecte
-    date_str = str(df_opt["date"].iloc[0])
-    t0 = datetime.fromisoformat(date_str)
-
-    # date d'échéance
-    expiry = maturity_label_to_expiry(maturity_label)
-
-    # temps à maturité en années
-    tau = max((expiry - t0).days, 0) / 365.0
-    
-    #
-    Kmax_market = float(df_opt["strike"].max())
-    Smax = max(3.0 * Kmax_market, 2.0 * S0)
-
-    return df_opt, S0, tau, t0, expiry, Kmax_market, Smax
 
 
 
 def main():
+
+    ## On charge les données de marché
     parser = argparse.ArgumentParser(description="Diffusion 1D with theta-scheme (Gmsh high-order FE)")
     parser.add_argument("-order", type=int, default=1)
     parser.add_argument("-cl1", type=float, default=0.05)
@@ -116,12 +55,20 @@ def main():
     
     gmsh_init("diffusion_1d")
 
+    # L va fixer le domaine [0, S_max]
     L = S_max
+
+    # On construit le maillage 1D
+    #elemtype : type d'élément (1D, 2D, etc.)
+    #nodeTags : tags des noeuds
+    #nodeCoords : coordonnées des noeuds
+    # elemTags : tags des éléments
+    # elemNodeTags : pour chaque élément, les tags des noeuds qui lui sont associés
 
     _, elemType, nodeTags, nodeCoords, elemTags, elemNodeTags = build_1d_mesh(
         L=L, cl1=args.cl1, cl2=args.cl2, order=args.order
     )
-
+    # On construit le mapping entre les tags de noeuds gmsh et les indices de degrés (ij )de liberté (dof) dans notre système linéaire
     unique_dofs_tags = np.unique(elemNodeTags)
 
     num_dofs = len(unique_dofs_tags)
