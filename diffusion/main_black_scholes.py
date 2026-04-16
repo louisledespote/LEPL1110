@@ -4,7 +4,7 @@ from html import parser
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from plot_utils import plot_prices_vs_strike
+from plot_utils import plot_prices_vs_strike, plot_payoff, plot_boundary_conditions, plot_final_solution
 from stiffness import assemble_black_scholes_operator
 from mass import assemble_mass
 from dirichlet import theta_step
@@ -158,8 +158,14 @@ def main():
             "fem_price": fem_price,
             "abs_error": abs(fem_price - market_price)
             })
+        if abs(K_strike - 40.0) < 1e-12:
+            plot_payoff(S_nodes, K_strike)
+            plot_boundary_conditions(L, K_strike, r, tau)
+            plot_final_solution(S_nodes, U, S0, fem_price, K_strike, args.maturity)
         
     print("\n=== Comparaison FEM / Marché ===")
+    error_mean = np.mean([row["abs_error"] for row in results])
+    print(f"Erreur moyenne : {error_mean:.4f}")
     for row in results:
         print(
             f"K={row['strike']:.2f} | "
@@ -167,8 +173,10 @@ def main():
             f"FEM={row['fem_price']:.4f} | "
             f"Erreur={row['abs_error']:.4f}"
         )
-        plot_prices_vs_strike(results, args.maturity)
+    plot_prices_vs_strike(results, args.maturity)
     gmsh_finalize()
+
+
 
 
 

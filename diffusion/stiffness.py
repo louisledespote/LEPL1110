@@ -139,7 +139,7 @@ def assemble_black_scholes_operator(elemTags, conn, jac, det, xphys, w, Na, gN, 
                     gradNb = invjacg @ gN[g, b]
                     dNb_ds = gradNb[0]  # Assuming the first component corresponds to the spatial derivative in the 1D case
                     diffusion_term = a_g * dNa_ds * dNb_ds
-                    convection_term = - b_g * dNb_ds * Na
+                    convection_term = b_g * dNb_ds * Na
                     reaction_term = r * Na * Nb
                     
                     K[Ia, Ib] += wg * (diffusion_term + convection_term + reaction_term) * detg

@@ -155,3 +155,61 @@ def plot_prices_vs_strike(results, maturity):
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+
+
+def plot_payoff(S_nodes, K_strike):
+    
+    order = np.argsort(S_nodes)
+    S_sorted = S_nodes[order]
+    payoff = np.maximum(S_sorted - K_strike, 0.0)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(S_sorted, payoff, label=f"Payoff, K={K_strike}")
+    plt.xlabel("S")
+    plt.ylabel("V(S,0)")
+    plt.title("Condition initiale du call")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()    
+
+def plot_boundary_conditions(L, K_strike, r, tau_max, nsteps=200):
+   
+
+    tau_vals = np.linspace(0.0, tau_max, nsteps)
+    left_bc = np.zeros_like(tau_vals)
+    right_bc = L - K_strike * np.exp(-r * tau_vals)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(tau_vals, left_bc, label="Bord gauche : V(0,τ)=0")
+    plt.plot(tau_vals, right_bc, label="Bord droit : V(Smax,τ)=Smax-K exp(-rτ)")
+    plt.xlabel("τ")
+    plt.ylabel("Valeur imposée")
+    plt.title("Conditions aux limites")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_final_solution(S_nodes, U, S0, fem_price, K_strike, maturity):
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    order = np.argsort(S_nodes)
+    S_sorted = S_nodes[order]
+    U_sorted = U[order]
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(S_sorted, U_sorted, label="Solution FEM finale")
+    plt.axvline(S0, linestyle="--", label=f"S0 = {S0}")
+    plt.plot([S0], [fem_price], "o", label=f"Vh(S0) = {fem_price:.4f}")
+
+    plt.xlabel("S")
+    plt.ylabel("V(S, τmax)")
+    plt.title(f"Solution finale pour K={K_strike} - {maturity}")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
