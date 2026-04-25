@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.sparse import lil_matrix
 
-def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, Na, gN, kappa_fun, rhs_fun, tag_to_dof):
+def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, N_vals, gN, kappa_fun, rhs_fun, tag_to_dof):
     """
     Assemble global stiffness matrix and load vector for:
         -d/dx (kappa(x) du/dx) = f(x)
@@ -39,7 +39,7 @@ def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, Na, gN, kappa
     xphys = np.asarray(xphys, dtype=np.float64).reshape(ne, ngp, 3)
     jac = np.asarray(jac, dtype=np.float64).reshape(ne, ngp, 3, 3)
     conn = np.asarray(conn, dtype=np.int64).reshape(ne, nloc)
-    N = np.asarray(N, dtype=np.float64).reshape(ngp, nloc)
+    N_vals = np.asarray(N_vals, dtype=np.float64).reshape(ngp, nloc)
     gN = np.asarray(gN, dtype=np.float64).reshape(ngp, nloc, 3)
 
     K = lil_matrix((nn, nn), dtype=np.float64)
@@ -59,7 +59,8 @@ def assemble_stiffness_and_rhs(elemTags, conn, jac, det, xphys, w, Na, gN, kappa
 
             for a in range(nloc):
                 Ia = int(dof_indices[a])
-                F[Ia] += wg * f_g * N[g, a] * detg
+                Na = N_vals[g, a]
+                F[Ia] += wg * f_g * Na * detg
 
                 gradNa = invjacg @ gN[g, a]
                 for b in range(nloc):
