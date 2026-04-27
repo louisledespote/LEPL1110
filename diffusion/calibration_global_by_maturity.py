@@ -74,7 +74,6 @@ def calibrate_sigma_for_group(
     )
 
     sigma_opt = float(res.x)
-
     train_mse, train_prices = compute_group_error(
         df_group=df_group,
         sigma=sigma_opt,
@@ -90,7 +89,6 @@ def calibrate_sigma_for_group(
 
 
 def run_one_maturity_from_dataset(
-    df_global,
     dataset_csv,
     maturity,
     r,
@@ -102,6 +100,8 @@ def run_one_maturity_from_dataset(
     train_frac,
     random_state
 ):
+    df_global = pd.read_csv(dataset_csv)
+
     df_maturity = df_global[df_global["maturity"] == maturity].copy()
 
     if df_maturity.empty:
@@ -135,6 +135,7 @@ def run_one_maturity_from_dataset(
     test_prices["set"] = "test"
 
     df_out = pd.concat([train_prices, test_prices], ignore_index=True)
+
     df_out["sigma_calibrated"] = sigma_opt
     df_out["r"] = r
 
@@ -146,13 +147,11 @@ def run_one_maturity_from_dataset(
         "test_mae": float(test_prices["abs_error"].mean()) if len(test_prices) > 0 else np.nan,
         "n_train": len(train_prices),
         "n_test": len(test_prices),
-        "n_obs": len(df_maturity),
         "n_dates": df_maturity["date"].nunique(),
         "dataset_csv": dataset_csv
     }
 
     return df_out, summary
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -177,8 +176,11 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
 
     df_global = pd.read_csv(args.dataset_csv)
-
     maturities = sorted(df_global["maturity"].dropna().unique())
+
+    print("\nMaturités trouvées dans le dataset :")
+    for maturity in maturities:
+        print(" -", maturity)
 
     all_results = []
     all_summaries = []
@@ -187,7 +189,6 @@ def main():
         print(f"\n=== Calibration maturité : {maturity} ===")
 
         df_results, summary = run_one_maturity_from_dataset(
-            df_global=df_global,
             dataset_csv=args.dataset_csv,
             maturity=maturity,
             r=args.r,
@@ -203,15 +204,6 @@ def main():
         all_results.append(df_results)
         all_summaries.append(summary)
 
-        print(
-            f"{maturity} | "
-            f"sigma={summary['sigma_calibrated']:.6f} | "
-            f"train MAE={summary['train_mae']:.6f} | "
-            f"test MAE={summary['test_mae']:.6f} | "
-            f"n={summary['n_obs']} | "
-            f"dates={summary['n_dates']}"
-        )
-
     df_all_results = pd.concat(all_results, ignore_index=True)
     df_all_summary = pd.DataFrame(all_summaries)
 
@@ -222,15 +214,8 @@ def main():
     df_all_summary.to_csv(summary_path, index=False)
 
     print("\n=== Calibration par maturité terminée ===")
-    print(
-        df_all_summary[
-            ["maturity", "sigma_calibrated", "train_mae", "test_mae", "n_train", "n_test", "n_dates"]
-        ]
-    )
-
-    print(f"\nExport détails : {results_path}")
+    print(df_all_summary)
+    print(f"Export détails : {results_path}")
     print(f"Export résumé  : {summary_path}")
-
-
 if __name__ == "__main__":
     main()

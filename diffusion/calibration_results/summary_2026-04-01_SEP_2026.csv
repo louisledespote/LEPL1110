@@ -1,2 +1,0 @@
-date,maturity,expiry,tau,S0,S_max,sigma_calibrated,train_mse,train_mae,test_mae,n_train,n_test,options_csv
-2026-04-01,SEP 2026,2026-09-18,0.4657534246575342,41.2,150.0,0.16379479629687005,0.054317284048751566,0.20415853010242044,0.1343777423177309,8,3,../data/daily_clean/2026-04-01_options.csv
