@@ -89,10 +89,10 @@ def calibrate_sigma_for_group(
     return sigma_opt, train_mse, train_prices
 
 
-def run_one_maturity_from_dataset(
+def run_one_strike_from_dataset(
     df_global,
     dataset_csv,
-    maturity,
+    strike,
     r,
     order,
     cl1,
@@ -102,13 +102,13 @@ def run_one_maturity_from_dataset(
     train_frac,
     random_state
 ):
-    df_maturity = df_global[df_global["maturity"] == maturity].copy()
+    df_strike = df_global[df_global["strike"] == strike].copy()
 
-    if df_maturity.empty:
-        raise ValueError(f"Aucune option trouvée pour la maturité {maturity}")
+    if df_strike.empty:
+        raise ValueError(f"Aucune option trouvée pour le strike {strike}")
 
-    df_train = df_maturity.sample(frac=train_frac, random_state=random_state)
-    df_test = df_maturity.drop(df_train.index)
+    df_train = df_strike.sample(frac=train_frac, random_state=random_state)
+    df_test = df_strike.drop(df_train.index)
 
     sigma_opt, train_mse, train_prices = calibrate_sigma_for_group(
         df_group=df_train,
@@ -120,16 +120,19 @@ def run_one_maturity_from_dataset(
         nsteps=nsteps
     )
 
-    _, test_prices = compute_group_error(
-        df_group=df_test,
-        sigma=sigma_opt,
-        r=r,
-        order=order,
-        cl1=cl1,
-        cl2=cl2,
-        theta=theta,
-        nsteps=nsteps
-    )
+    if len(df_test) > 0:
+        _, test_prices = compute_group_error(
+            df_group=df_test,
+            sigma=sigma_opt,
+            r=r,
+            order=order,
+            cl1=cl1,
+            cl2=cl2,
+            theta=theta,
+            nsteps=nsteps
+        )
+    else:
+        test_prices = pd.DataFrame()
 
     train_prices["set"] = "train"
     test_prices["set"] = "test"
@@ -137,17 +140,22 @@ def run_one_maturity_from_dataset(
     df_out = pd.concat([train_prices, test_prices], ignore_index=True)
     df_out["sigma_calibrated"] = sigma_opt
     df_out["r"] = r
+    df_out["group_strike"] = strike
 
     summary = {
-        "maturity": maturity,
+        "strike": float(strike),
         "sigma_calibrated": sigma_opt,
         "train_mse": train_mse,
         "train_mae": float(train_prices["abs_error"].mean()),
         "test_mae": float(test_prices["abs_error"].mean()) if len(test_prices) > 0 else np.nan,
         "n_train": len(train_prices),
         "n_test": len(test_prices),
-        "n_obs": len(df_maturity),
-        "n_dates": df_maturity["date"].nunique(),
+        "n_obs": len(df_strike),
+        "n_dates": df_strike["date"].nunique(),
+        "n_maturities": df_strike["maturity"].nunique(),
+        "mean_moneyness": float(df_strike["moneyness"].mean()),
+        "min_moneyness": float(df_strike["moneyness"].min()),
+        "max_moneyness": float(df_strike["moneyness"].max()),
         "dataset_csv": dataset_csv
     }
 
@@ -178,18 +186,22 @@ def main():
 
     df_global = pd.read_csv(args.dataset_csv)
 
-    maturities = sorted(df_global["maturity"].dropna().unique())
+    strikes = sorted(df_global["strike"].dropna().unique())
+
+    print("\nStrikes trouvés dans le dataset :")
+    for strike in strikes:
+        print(" -", strike)
 
     all_results = []
     all_summaries = []
 
-    for maturity in maturities:
-        print(f"\n=== Calibration maturité : {maturity} ===")
+    for strike in strikes:
+        print(f"\n=== Calibration strike : {strike:.2f} ===")
 
-        df_results, summary = run_one_maturity_from_dataset(
+        df_results, summary = run_one_strike_from_dataset(
             df_global=df_global,
             dataset_csv=args.dataset_csv,
-            maturity=maturity,
+            strike=strike,
             r=args.r,
             order=args.order,
             cl1=args.cl1,
@@ -204,27 +216,37 @@ def main():
         all_summaries.append(summary)
 
         print(
-            f"{maturity} | "
+            f"K={strike:.2f} | "
             f"sigma={summary['sigma_calibrated']:.6f} | "
             f"train MAE={summary['train_mae']:.6f} | "
             f"test MAE={summary['test_mae']:.6f} | "
             f"n={summary['n_obs']} | "
-            f"dates={summary['n_dates']}"
+            f"dates={summary['n_dates']} | "
+            f"maturities={summary['n_maturities']}"
         )
 
     df_all_results = pd.concat(all_results, ignore_index=True)
     df_all_summary = pd.DataFrame(all_summaries)
 
-    results_path = os.path.join(args.out_dir, "details_sigma_by_maturity.csv")
-    summary_path = os.path.join(args.out_dir, "summary_sigma_by_maturity.csv")
+    results_path = os.path.join(args.out_dir, "details_sigma_by_strike.csv")
+    summary_path = os.path.join(args.out_dir, "summary_sigma_by_strike.csv")
 
     df_all_results.to_csv(results_path, index=False)
     df_all_summary.to_csv(summary_path, index=False)
 
-    print("\n=== Calibration par maturité terminée ===")
+    print("\n=== Calibration par strike terminée ===")
     print(
         df_all_summary[
-            ["maturity", "sigma_calibrated", "train_mae", "test_mae", "n_train", "n_test", "n_dates"]
+            [
+                "strike",
+                "sigma_calibrated",
+                "train_mae",
+                "test_mae",
+                "n_train",
+                "n_test",
+                "n_dates",
+                "n_maturities"
+            ]
         ]
     )
 

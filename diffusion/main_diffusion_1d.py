@@ -31,6 +31,7 @@ def main():
     _, elemType, nodeTags, nodeCoords, elemTags, elemNodeTags = build_1d_mesh(
         L=args.L, cl1=args.cl1, cl2=args.cl2, order=args.order
     )
+# stiffness.py
 
     unique_dofs_tags = np.unique(elemNodeTags)
 
