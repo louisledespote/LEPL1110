@@ -1,187 +1,185 @@
-#  Projet LEPL1110 – Black–Scholes & Éléments Finis
+# Black–Scholes FEM — Guide d’utilisation
 
-## Objectif du projet
-
-Ce projet vise à résoudre l’équation de Black–Scholes à l’aide de la méthode des éléments finis (FEM), et à comparer les résultats avec les données de marché réelles.
-
-Le projet est structuré en deux parties :
+Ce projet résout le modèle de Black–Scholes par éléments finis, compare la solution FEM à la solution analytique, puis calibre une volatilité constante sur des données de marché.
 
 ---
 
-#  PARTIE 1 — Black–Scholes avec volatilité constante
+# Structure du projet
 
-## Objectifs
-
-- Implémenter le modèle Black–Scholes (PDE)
-- Résoudre l’équation avec FEM
-- Comparer :
-  - solution analytique
-  - solution FEM
-  - prix de marché
-- Estimer la volatilité σ à partir des données (volatilité implicite)
-
----
-
-## Équation étudiée
-
-\[
-\frac{\partial V}{\partial t}
-+ \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}
-+ r S \frac{\partial V}{\partial S}
-- rV = 0
-\]
-
----
-
-## Travail à faire
-
-### 🔹 1. Adapter le code FEM existant
-
-Le code actuel résout une équation de diffusion 1D :
-
-👉 `diffusion/main_diffusion_1d.py`
-
-À modifier :
-
-- passer de :
-
-👉 modifier `stiffness.py` pour ajouter :
-
-- diffusion :
-\[
-\frac{1}{2}\sigma^2 S^2
-\]
-
-- convection :
-\[
-r S \frac{\partial V}{\partial S}
-\]
-
-- réaction :
-\[
--rV
-\]
-
----
-
-### 🔹 2. Ajouter la dimension temporelle
-
-Utiliser le schéma en temps déjà implémenté (`theta_step`).
-
-À faire :
-- boucle en temps
-- condition initiale (payoff)
-
-\[
-V(S,0) = \max(S-K,0)
-\]
-
----
-
-### 🔹 3. Conditions aux limites
-
-- \(S=0\) → \(V=0\)
-- \(S=S_{max}\) →
-\[
-V(S,t) = S - K e^{-r(T-t)}
-\]
-
----
-
-### 🔹 4. Comparaison analytique
-
-Implémenter la formule fermée Black–Scholes
-
-Comparer :
-- FEM vs analytique
-- erreur en fonction du maillage
-
----
-
-### 🔹 5. Estimation de la volatilité σ
-
-À partir des données collectées :
-
-- lire CSV (`data/`)
-- pour chaque option :
-- calculer σ implicite
-- construire :
-- σ(K)
-- σ moyenne
-
----
-
-### 🔹 6. Comparaison avec le marché
-
-Comparer :
-- prix FEM
-- prix Black–Scholes
-- prix marché (Euronext)
-
----
-
-#  PARTIE 2 — Black–Scholes non linéaire
-
-## Objectif
-
-Rendre le modèle plus réaliste :
-
-\[
-\sigma = \sigma(S,t)
-\]
-
----
-
-## Approche proposée
-
-### Option simple
-
-\[
-\sigma(S) = \sigma_0 (1 + \alpha S)
-\]
-
----
-
-## Modifications nécessaires
-
-- remplacer σ constante dans `stiffness.py`
-- recalculer diffusion :
-
-\[
-\kappa(S) = \frac{1}{2} \sigma(S)^2 S^2
-\]
-
----
-
-## Intérêt
-
-- plus de solution analytique ❌
-- FEM devient indispensable ✅
-
----
-
-# 📁 Structure du projet
-
-projet/
+```text
+PROJET/
+├── data/                              # Données CSV marché
 │
-├── data/
-│ ├── raw/
-│ ├── cleaned/
-│ ├── daily_clean/
+├── diffusion/                         # Code principal du projet
+│   ├── main_black_scholes.py          # Lance une simulation FEM Black–Scholes
+│   ├── precision_fem.py               # Génère les données d'étude de précision
+│   ├── plot_precision.py              # Trace les graphes de précision FEM
+│   ├── plot_callibration.py           # Trace les graphes de calibration
+│   │
+│   ├── calibration_script/            # Scripts de calibration
+│   ├── calibration_results/           # Résultats CSV de calibration
+│   ├── calibration_plots/             # Graphes de calibration
+│   ├── precision_results/             # Résultats CSV de précision
+│   ├── precision_plots/               # Graphes de précision
+│   │
+│   ├── stiffness.py                   # Assemblage opérateur Black–Scholes
+│   ├── mass.py                        # Assemblage matrice de masse
+│   ├── dirichlet.py                   # Conditions de Dirichlet + schéma theta
+│   ├── gmsh_utils.py                  # Fonctions utilitaires Gmsh
+│   ├── fem_eval.py                    # Évaluation de la solution FEM
+│   ├── errors.py                      # Calcul d'erreurs numériques
+│   ├── plot_utils.py                  # Fonctions de visualisation
+│   ├── read_data_csv.py               # Lecture des données marché
+│   └── panpan.msh                     # Maillage Gmsh
 │
-├── scripts/
-│ ├── collect_euronext.py
-│ ├── clean_export_daily.py
-│ ├── run_daily.py
-│ ├── export_csv.py
-│
-├── diffusion/
-│ ├── main_diffusion_1d.py
-│ ├── stiffness.py
-│ ├── mass.py
-│ ├── dirichlet.py
-│ ├── gmsh_utils.py
-│ ├── plot_utils.py
-│ ├── errors.py
-│
+├── scripts/                           # Scripts auxiliaires
 ├── README.md
+└── documents PDF                      # Ressources théoriques
+```
+
+---
+
+# Installation
+
+Créer un environnement virtuel :
+
+```bash
+python3 -m venv femvenv
+source femvenv/bin/activate
+```
+
+Installer les dépendances :
+
+```bash
+pip install numpy scipy pandas matplotlib gmsh
+```
+
+---
+
+# Lancer une simulation FEM Black–Scholes
+
+Depuis le dossier `diffusion/`, utiliser :
+
+```bash
+python3 main_black_scholes.py \
+    --options_csv ../data/daily_clean/2026-04-01_options.csv \
+    --underlying_csv ../data/daily_clean/2026-04-01_underlying.csv \
+    --maturity "MAY 2026" \
+    --sigma 0.2 \
+    --r 0.02 \
+    -order 2 \
+    -cl1 0.05 \
+    -cl2 0.05 \
+    --theta 1.0 \
+    --nsteps 500
+```
+
+## Paramètres importants
+
+| Paramètre | Description |
+|---|---|
+| `--maturity` | Maturité étudiée |
+| `--sigma` | Volatilité |
+| `--r` | Taux sans risque |
+| `-order` | Ordre des éléments finis |
+| `-cl1`, `-cl2` | Raffinement du maillage |
+| `--theta` | Schéma temporel |
+| `--nsteps` | Nombre de pas de temps |
+
+## Schémas temporels
+
+| Valeur de `theta` | Schéma |
+|---|---|
+| `1.0` | Euler implicite |
+| `0.5` | Crank–Nicolson |
+
+---
+
+# Étude de précision numérique
+
+Générer les données de convergence :
+
+```bash
+python3 precision_fem.py
+```
+
+Tracer les graphes :
+
+```bash
+python3 plot_precision.py
+```
+
+Les figures sont générées dans :
+
+```text
+precision_plots/
+```
+
+Graphes générés :
+
+```text
+comparaison_schemas_temporels.png
+influence_ordre_semilogy.png
+raffinement_maillage_loglog.png
+```
+
+---
+
+# Calibration de la volatilité
+
+## Calibration par maturité
+
+```bash
+python3 calibration_script/calibration_global_by_maturity.py
+```
+
+## Calibration par strike
+
+```bash
+python3 calibration_script/calibration_global_by_strike.py
+```
+
+Les résultats CSV sont stockés dans :
+
+```text
+calibration_results/
+```
+
+---
+
+# Génération des graphes de calibration
+
+```bash
+python3 plot_callibration.py
+```
+
+Les figures sont générées dans :
+
+```text
+calibration_plots/
+```
+
+Graphes générés :
+
+```text
+mae_par_maturite.png
+sigma_par_maturite.png
+mae_par_strike.png
+sigma_par_strike.png
+```
+
+---
+
+# Workflow complet
+
+Depuis le dossier `diffusion/` :
+
+```bash
+python3 precision_fem.py
+python3 plot_precision.py
+
+python3 calibration_script/calibration_global_by_maturity.py
+python3 calibration_script/calibration_global_by_strike.py
+
+python3 plot_callibration.py
+```
