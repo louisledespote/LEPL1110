@@ -150,14 +150,29 @@ def main():
             "nsteps": 500
         })
 
-    # 4) Influence du nombre de pas de temps
-    for nsteps in [100, 250, 500, 1000]:
+    # 4) Convergence temporelle avec Euler implicite
+    # theta = 1.0 : ordre temporel attendu = 1
+    nsteps_list = [100, 250, 500, 1000, 2000]
+
+    # Euler implicite
+    for nsteps in nsteps_list:
         experiments.append({
-            "experiment_name": "raffinement_temps",
+            "experiment_name": "raffinement_temps_euler",
             "order": 2,
             "cl1": 0.05,
             "cl2": 0.05,
             "theta": 1.0,
+            "nsteps": nsteps
+        })
+
+    # Crank-Nicolson
+    for nsteps in nsteps_list:
+        experiments.append({
+            "experiment_name": "raffinement_temps_crank_nicolson",
+            "order": 2,
+            "cl1": 0.05,
+            "cl2": 0.05,
+            "theta": 0.5,
             "nsteps": nsteps
         })
 

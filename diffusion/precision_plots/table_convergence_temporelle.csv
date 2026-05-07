@@ -1,0 +1,11 @@
+scheme,experiment,nsteps,analytic_mae,gain_vs_previous,observed_order_vs_previous
+Euler implicite,raffinement_temps_euler,100.0,0.0006651759386955,,
+Euler implicite,raffinement_temps_euler,250.0,0.000266577207888,2.495246851617441,0.9979230729128415
+Euler implicite,raffinement_temps_euler,500.0,0.0001333727906412,1.9987375731317418,0.9990890639810582
+Euler implicite,raffinement_temps_euler,1000.0,6.670740562343554e-05,1.9993700758517237,0.9995455342040704
+Euler implicite,raffinement_temps_euler,2000.0,3.3358941695900296e-05,1.9996859082503105,0.9997734129024192
+Crank-Nicolson,raffinement_temps_crank_nicolson,100.0,1.5147514168269276e-06,,
+Crank-Nicolson,raffinement_temps_crank_nicolson,250.0,2.430828894713204e-07,6.231419332398722,1.9967506659425491
+Crank-Nicolson,raffinement_temps_crank_nicolson,500.0,7.203295159594815e-08,3.3746068165419145,1.7547194201281147
+Crank-Nicolson,raffinement_temps_crank_nicolson,1000.0,1.820797748055345e-08,3.956120424296495,1.9840863423991153
+Crank-Nicolson,raffinement_temps_crank_nicolson,2000.0,4.59097179464604e-09,3.9660399355507847,1.987699204679973
